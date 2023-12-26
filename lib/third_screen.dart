@@ -4,6 +4,14 @@ import 'package:http/http.dart' as http;
 import 'second_screen.dart';
 
 class ThirdScreen extends StatefulWidget {
+  const ThirdScreen({super.key});
+
+  get _refreshDataCompleter => null;
+
+  get refreshDataCompleter => null;
+
+  set users(List<User> users) {}
+
   @override
   _ThirdScreenState createState() => _ThirdScreenState();
 }
@@ -30,8 +38,8 @@ class _ThirdScreenState extends State<ThirdScreen> {
     });
 
     try {
-      final response =
-          await http.get(Uri.parse('https://reqres.in/api/users?page=$currentPage&per_page=$perPage'));
+      final response = await http.get(Uri.parse(
+          'https://reqres.in/api/users?page=$currentPage&per_page=$perPage'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -68,17 +76,49 @@ class _ThirdScreenState extends State<ThirdScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Third Screen')),
+      appBar: AppBar(
+        title: Padding(
+          padding:
+              EdgeInsets.only(right: 20.0), // Set left padding to 16 pixels
+          child: Center(
+            child: Text(
+              'Third Screen',
+              style: TextStyle(
+                color: Color.fromRGBO(4, 2, 29, 1),
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Image.asset(
+              'assets/img/arrow.png'), // Adjust the image path as needed
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SecondScreen(
+                        name: '',
+                      )),
+            );
+          },
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: ListView.builder(
-          itemCount: users.length + 1, 
+          itemCount: users.length + 1,
           itemBuilder: (context, index) {
             if (index == users.length) {
               return _buildLoadingIndicator();
             } else {
               return ListTile(
-                title: Text('${users[index].firstName} ${users[index].lastName}'),
+                title:
+                    Text('${users[index].firstName} ${users[index].lastName}'),
                 subtitle: Text('Email: ${users[index].email}'),
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(users[index].avatar),
